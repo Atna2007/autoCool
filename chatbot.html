@@ -1,32 +1,30 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <link rel="icon" href="autocool-logo (1).png"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="icon" href="autocool-logo (1).png" />
-  <title>¡Supérate! — Chatbot</title>
+  <title>AutoCool — Chatbot</title>
   <style>
-    * { box-sizing: border-box; }
+     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      min-height: 100vh;
       background: #f4f4f5;
     }
     header {
       height: 60px;
-      background: #00B8FF;
+      background: #EFF3F5;
       padding: 10px 20px;
       display: flex;
       align-items: center;
       box-shadow: 0 1px 4px rgba(0,0,0,0.1);
       justify-content: space-between;
     }
-    .header-image {
-      height: 160px;
-    }
+    .header-image { height: 100px; }
     .history-btn {
       background: #ffffff;
       border: none;
@@ -54,7 +52,7 @@
       animation: fadeIn 0.3s ease;
     }
     .user-message {
-      background-color: #4a90e2;
+      background-color: #0674f3;
       color: white;
       align-self: flex-end;
       border-top-right-radius: 0;
@@ -70,6 +68,10 @@
       padding: 12px 20px;
       background: white;
       border-top: 1px solid #ddd;
+      position: sticky;
+      bottom: 0;
+      z-index: 10;
+      gap: 8px;
     }
     #mensaje {
       flex: 1;
@@ -79,32 +81,35 @@
       font-size: 1rem;
       outline: none;
     }
-    #sendBtn {
+    #sendBtn, #audioBtn {
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: #00B8FF;
       border: none;
-      margin-left: 10px;
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
     }
-    #sendBtn:hover {
-      background: #0769b0;
+    #sendBtn {
+      background: #000EE7;
     }
-    #sendBtn svg {
+    #sendBtn:hover { background: #357abd; }
+    #sendBtn svg, #audioBtn svg {
       fill: white;
       width: 22px;
       height: 22px;
+    }
+    #audioBtn {
+      background: #000EE7;
+    }
+    #audioBtn.listening {
+      background: #357abd; /* cambia color cuando escucha */
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    /* Historial modal */
     .modal {
       position: fixed;
       top: 60px;
@@ -119,10 +124,7 @@
       max-height: 60vh;
       overflow-y: auto;
     }
-    .modal h3 {
-      margin-bottom: 10px;
-      font-size: 1.1rem;
-    }
+    .modal h3 { margin-bottom: 10px; font-size: 1.1rem; }
     .conversation-item {
       padding: 8px;
       background: #f0f0f0;
@@ -130,9 +132,7 @@
       border-radius: 6px;
       cursor: pointer;
     }
-    .conversation-item:hover {
-      background: #e0e0e0;
-    }
+    .conversation-item:hover { background: #e0e0e0; }
   </style>
 </head>
 <body>
@@ -145,22 +145,20 @@
   <div class="chat-container" id="respuesta"></div>
 
   <div class="input-area">
-  <input type="text" id="mensaje" placeholder="Pregunta a ¡Supérate!" />
-  
-  <button id="micBtn" aria-label="Hablar" style="margin-left: 10px; background: #00B8FF; border: none; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-    <!-- Icono micrófono SVG -->
-    <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="white">
-      <path d="M12 14q-1.25 0-2.125-.875T9 11V5q0-1.25.875-2.125T12 2q1.25 0 2.125.875T15 5v6q0 1.25-.875 2.125T12 14Zm-1 7v-3.05q-2.875-.35-4.688-2.488Q4.5 13.325 4.5 10.5h2q0 2.35 1.575 3.925Q9.65 16 12 16t3.925-1.575Q17.5 12.35 17.5 10.5h2q0 2.825-1.812 4.962Q15.875 17.6 13 17.95V21Z"/>
-    </svg>
-  </button>
-
-  <button id="sendBtn" aria-label="Enviar">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <path d="M12 2L5 9h4v9h6V9h4l-7-7z"/>
-    </svg>
-  </button>
-</div>
-
+    <input type="text" id="mensaje" placeholder="pregunta a AutoCool Plus" />
+    <button id="audioBtn" aria-label="Hablar">
+      <!-- Icono micrófono -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2zM11 18h2v3h-2v-3z"/>
+      </svg>
+    </button>
+    <button id="sendBtn" aria-label="Enviar">
+      <!-- Flecha hacia arriba SVG -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12 2L5 9h4v9h6V9h4l-7-7z"/>
+      </svg>
+    </button>
+  </div>
 
   <div class="modal" id="historialModal" style="display:none">
     <h3>Historial de conversaciones</h3>
@@ -170,11 +168,13 @@
   <script>
     const mensajeInput = document.getElementById("mensaje");
     const sendBtn = document.getElementById("sendBtn");
+    const audioBtn = document.getElementById("audioBtn");
     const respuestaDiv = document.getElementById("respuesta");
 
     let historialActual = [];
     let historialGuardado = JSON.parse(localStorage.getItem("conversacionesNorAI") || "[]");
 
+    // 🔑 Generar o recuperar un userId único por dispositivo
     if (!localStorage.getItem("chatUserId")) {
       if (crypto && typeof crypto.randomUUID === "function") {
         localStorage.setItem("chatUserId", crypto.randomUUID());
@@ -232,18 +232,16 @@
       renderConversacion();
       mensajeInput.value = "";
 
-      // Loader
       historialActual.push({ tipo: 'bot', texto: "..." });
       renderConversacion();
 
-      // Enviar al webhook con contexto
-      fetch("https://hook.us2.make.com/48fv9qpdi1t0b5pb0c9uhhkb3o47csnw", {
+      fetch("https://hook.us2.make.com/ggogdrw8nb4xbvp6yzmk7i7s5vbjqe4v", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: chatUserId,
+          userId: chatUserId,   // 🆕 Se envía el userId único
           mensaje: texto,
-          contexto: historialActual.map(e => e.texto).join("\n")
+          contexto: historialActual.map(e => e.texto).join("\\n")
         })
       })
       .then(res => res.text())
@@ -268,44 +266,35 @@
       }
     });
 
+    // 🎤 Reconocimiento de voz
+    let recognition;
+    if ("webkitSpeechRecognition" in window) {
+      recognition = new webkitSpeechRecognition();
+      recognition.lang = "es-ES";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        audioBtn.classList.add("listening");
+      };
+      recognition.onend = () => {
+        audioBtn.classList.remove("listening");
+      };
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        mensajeInput.value = transcript;
+      };
+
+      audioBtn.addEventListener("click", () => {
+        recognition.start();
+      });
+    } else {
+      audioBtn.style.display = "none";
+      console.warn("Reconocimiento de voz no soportado en este navegador.");
+    }
+
     window.addEventListener("beforeunload", guardarConversacion);
     window.onload = renderConversacion;
-    const micBtn = document.getElementById("micBtn");
-
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-if (SpeechRecognition) {
-  const recognition = new SpeechRecognition();
-  recognition.lang = "es-ES";
-  recognition.continuous = false;
-  recognition.interimResults = false;
-
-  micBtn.addEventListener("click", () => {
-    recognition.start();
-    micBtn.style.background = "#0077cc"; // cambia color al escuchar
-  });
-
-  recognition.onresult = (event) => {
-    const textoVoz = event.results[0][0].transcript;
-    mensajeInput.value = textoVoz;
-    micBtn.style.background = "#00B8FF";
-
-    // Puedes enviar automáticamente el mensaje aquí si quieres:
-    enviar();
-  };
-
-  recognition.onerror = (e) => {
-    console.error("Error en reconocimiento de voz:", e);
-    micBtn.style.background = "#00B8FF";
-  };
-
-  recognition.onend = () => {
-    micBtn.style.background = "#00B8FF";
-  };
-} else {
-  micBtn.disabled = true;
-  micBtn.title = "Tu navegador no soporta reconocimiento de voz";
-}
-
   </script>
 </body>
 </html>
