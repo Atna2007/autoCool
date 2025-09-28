@@ -241,6 +241,7 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          userId: chatUserId,
           mensaje: texto,
           contexto: historialActual.map(e => e.texto).join("\n")
         })
@@ -308,4 +309,3 @@ if (SpeechRecognition) {
   </script>
 </body>
 </html>
-
